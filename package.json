@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node backend/src/server.js",
-    "build": "cd frontend && npm run build",
+    "build": "cd frontend && npm run build && cd .. && if exist docs rmdir /s /q docs && xcopy frontend\\dist docs /e /i /y",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "install:backend": "cd backend && npm install",
@@ -24,3 +24,4 @@
   "author": "Theo",
   "license": "MIT"
 }
+

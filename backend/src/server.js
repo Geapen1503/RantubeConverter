@@ -25,14 +25,17 @@ app.use('/api', apiRouter);
 
 // Serve frontend static build if it exists (for local demo & fullstack hosting)
 const frontendDistPath = path.resolve(__dirname, '../../frontend/dist');
-if (fs.existsSync(frontendDistPath)) {
-  console.log(`[Server] Serving static frontend from: ${frontendDistPath}`);
-  app.use(express.static(frontendDistPath));
+const docsPath = path.resolve(__dirname, '../../docs');
+const staticPath = fs.existsSync(frontendDistPath) ? frontendDistPath : docsPath;
+
+if (fs.existsSync(staticPath)) {
+  console.log(`[Server] Serving static frontend from: ${staticPath}`);
+  app.use(express.static(staticPath));
 
   // SPA fallback
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 } else {
   app.get('/', (req, res) => {
@@ -83,3 +86,4 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+

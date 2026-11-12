@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, CheckCircle2, AlertCircle, Loader2, ArrowLeft, Disc, Volume2 } from 'lucide-react';
+import { Download, CheckCircle2, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { getDownloadUrl } from '../services/api';
 
 export function ProgressCard({ job, onReset }) {
@@ -10,138 +10,80 @@ export function ProgressCard({ job, onReset }) {
   const downloadUrl = isCompleted ? getDownloadUrl(job.id) : null;
 
   return (
-    <div className="w-full max-w-3xl mx-auto glass-panel rounded-3xl p-6 sm:p-9 shadow-2xl border border-dark-700/60 mt-6 animate-fade-in">
+    <div className="w-full max-w-2xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
       
-      {/* Status Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-          isCompleted
-            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-            : isFailed
-            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-            : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-        }`}>
-          {isCompleted ? (
-            <CheckCircle2 className="w-7 h-7" />
-          ) : isFailed ? (
-            <AlertCircle className="w-7 h-7" />
-          ) : (
-            <Loader2 className="w-6 h-6 animate-spin" />
-          )}
-        </div>
+      {/* Status Bar */}
+      <div className="flex items-center gap-3 mb-4">
+        {isCompleted ? (
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+        ) : isFailed ? (
+          <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+        ) : (
+          <Loader2 className="w-5 h-5 text-rose-400 animate-spin shrink-0" />
+        )}
 
-        <div>
-          <h3 className="text-lg sm:text-xl font-bold text-white">
-            {isCompleted
-              ? 'Conversion terminée avec succès !'
-              : isFailed
-              ? 'Échec de la conversion'
-              : 'Conversion en cours...'}
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-            {job.phase || 'Traitement du fichier multimédia...'}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs sm:text-sm font-medium text-zinc-200 truncate">
+            {job.fileName || job.videoTitle}
+          </p>
+          <p className="text-[11px] text-zinc-400 mt-0.5">
+            {job.phase}
           </p>
         </div>
+
+        {!isCompleted && !isFailed && (
+          <span className="text-xs font-semibold text-rose-400">
+            {job.progress || 0}%
+          </span>
+        )}
       </div>
 
-      {/* Progress Bar (while running) */}
+      {/* Progress Bar */}
       {!isCompleted && !isFailed && (
-        <div className="mb-6">
-          <div className="flex justify-between items-center text-xs font-semibold text-slate-300 mb-2">
-            <span>{job.phase}</span>
-            <span className="font-bold text-rose-400 text-sm">{job.progress || 0}%</span>
-          </div>
-
-          <div className="w-full h-3 bg-dark-900 rounded-full overflow-hidden p-0.5 border border-dark-750">
-            <div
-              className="h-full bg-gradient-to-r from-rose-600 via-brand-500 to-amber-400 rounded-full transition-all duration-300 shadow-lg shadow-rose-600/30"
-              style={{ width: `${Math.max(5, job.progress || 0)}%` }}
-            />
-          </div>
-
-          {(job.speed || job.eta) && (
-            <div className="flex justify-between items-center text-[11px] text-slate-500 mt-2">
-              {job.speed && <span>Vitesse : {job.speed}</span>}
-              {job.eta && <span>Temps restant : {job.eta}</span>}
-            </div>
-          )}
+        <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-4">
+          <div
+            className="h-full bg-rose-500 rounded-full transition-all duration-200"
+            style={{ width: `${Math.max(5, job.progress || 0)}%` }}
+          />
         </div>
       )}
 
-      {/* Error Message */}
+      {/* Error */}
       {isFailed && (
-        <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm leading-relaxed">
-          <strong>Erreur :</strong> {job.error || 'Une erreur inattendue est survenue.'}
+        <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 mb-4">
+          {job.error || 'Erreur lors de la conversion.'}
         </div>
       )}
 
-      {/* Completed Success View */}
+      {/* Completed Actions */}
       {isCompleted && (
-        <div className="space-y-6">
-          
-          {/* File details card */}
-          <div className="p-4 rounded-2xl bg-dark-850/80 border border-dark-750 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-dark-800 text-rose-400 border border-dark-700">
-                <Disc className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="font-bold text-sm text-white line-clamp-1">{job.fileName}</p>
-                <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                  <span className="uppercase font-semibold text-rose-400">{job.format}</span>
-                  <span>•</span>
-                  <span>
-                    {job.fileSize
-                      ? `${(job.fileSize / (1024 * 1024)).toFixed(2)} Mo`
-                      : 'Prêt'}
-                  </span>
-                  {job.embedThumbnail && (
-                    <>
-                      <span>•</span>
-                      <span className="text-emerald-400 font-medium">Pochette ID3 intégrée ✓</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Audio Preview if MP3 */}
+        <div className="space-y-3 mb-2">
           {job.format === 'mp3' && downloadUrl && (
-            <div className="p-4 rounded-2xl bg-dark-900 border border-dark-750 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-                <Volume2 className="w-4 h-4 text-rose-400" />
-                <span>Prévisualiser l'audio dans le navigateur :</span>
-              </div>
-              <audio controls className="w-full h-10 rounded-lg">
-                <source src={downloadUrl} type="audio/mpeg" />
-                Votre navigateur ne prend pas en charge l'élément audio.
-              </audio>
-            </div>
+            <audio controls className="w-full h-8 rounded">
+              <source src={downloadUrl} type="audio/mpeg" />
+            </audio>
           )}
 
-          {/* Big Download Button */}
           <a
             href={downloadUrl}
             download={job.fileName}
-            className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl font-extrabold text-base bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-xl shadow-emerald-600/25 transition-all transform active:scale-[0.99]"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
           >
-            <Download className="w-5 h-5" />
-            <span>Télécharger le fichier ({job.format.toUpperCase()})</span>
+            <Download className="w-4 h-4" />
+            <span>Télécharger ({job.format.toUpperCase()})</span>
           </a>
-
         </div>
       )}
 
-      {/* Action Footer */}
-      <div className="mt-6 pt-4 border-t border-dark-800 flex justify-center">
+      {/* Reset */}
+      <div className="pt-3 border-t border-zinc-800/80 flex justify-end">
         <button
           type="button"
           onClick={onReset}
-          className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white px-4 py-2 rounded-xl hover:bg-dark-800 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Convertir une autre vidéo</span>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Nouvelle conversion</span>
         </button>
       </div>
 

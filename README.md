@@ -128,3 +128,4 @@ Pour convertir vos vidéos depuis votre site en ligne :
 - **Backend** : Node.js, Express, Server-Sent Events (SSE).
 - **Moteur multimédia** : `yt-dlp` (extracteur de signatures YouTube à jour), `ffmpeg-static` (transcodage et fusion de flux).
 - **Métadonnées audio** : `node-id3` (ID3v2 tags), `sharp` (traitement d'image haute fidélité pour pochette 1:1).
+

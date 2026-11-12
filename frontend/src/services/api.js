@@ -160,3 +160,4 @@ export function subscribeToProgress(jobId, onUpdate, onError) {
     eventSource.close();
   };
 }
+

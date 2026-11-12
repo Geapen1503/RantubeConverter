@@ -44,3 +44,4 @@ jobs:
         with:
           folder: frontend/dist
           branch: gh-pages
+

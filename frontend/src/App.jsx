@@ -7,7 +7,7 @@ import { ProgressCard } from './components/ProgressCard';
 import { SettingsModal } from './components/SettingsModal';
 import { Footer } from './components/Footer';
 import { checkHealth, fetchVideoInfo, startConversion, subscribeToProgress, getJobStatus } from './services/api';
-import { AlertCircle, WifiOff } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export function App() {
   const [backendStatus, setBackendStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
@@ -66,7 +66,7 @@ export function App() {
       setVideoData(data);
     } catch (err) {
       console.error('Fetch video info error:', err);
-      setError(err.message || 'Impossible de récupérer la vidéo. Assurez-vous que le lien est valide.');
+      setError(err.message || 'Lien invalide ou introuvable.');
     } finally {
       setIsLoading(false);
     }
@@ -92,19 +92,17 @@ export function App() {
       const res = await startConversion(payload);
       const jobId = res.jobId;
 
-      // Set initial local job state
       setCurrentJob({
         id: jobId,
         status: 'queued',
         progress: 5,
-        phase: 'Préparation du téléchargement...',
+        phase: 'Préparation...',
         format,
         embedThumbnail,
         videoTitle: videoData.title,
         fileName: `${videoData.title}.${format}`
       });
 
-      // Start SSE Progress Listener
       if (unsubscribeRef.current) unsubscribeRef.current();
       if (pollingRef.current) clearInterval(pollingRef.current);
 
@@ -117,8 +115,6 @@ export function App() {
           }
         },
         () => {
-          // SSE Failed -> Fallback to polling every 1.5s
-          console.warn('Falling back to polling for job:', jobId);
           pollingRef.current = setInterval(async () => {
             try {
               const polledJob = await getJobStatus(jobId);
@@ -128,7 +124,7 @@ export function App() {
                 clearInterval(pollingRef.current);
               }
             } catch {
-              // ignore transient errors
+              // ignore
             }
           }, 1500);
         }
@@ -136,12 +132,11 @@ export function App() {
 
     } catch (err) {
       console.error('Start conversion error:', err);
-      setError(err.message || 'Impossible de démarrer la conversion.');
+      setError(err.message || 'Erreur lors du démarrage de la conversion.');
       setIsConverting(false);
     }
   };
 
-  // Reset to convert a new video
   const handleReset = () => {
     if (unsubscribeRef.current) unsubscribeRef.current();
     if (pollingRef.current) clearInterval(pollingRef.current);
@@ -152,7 +147,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-dark-950 text-slate-100">
+    <div className="min-h-screen flex flex-col justify-between bg-[#090a0f] text-zinc-100">
       
       {/* Navigation */}
       <Navbar
@@ -161,63 +156,40 @@ export function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 sm:py-12 flex flex-col">
+      <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
         
-        {/* Offline Warning Banner (if backend is unreachable) */}
-        {backendStatus === 'offline' && (
-          <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center gap-2.5">
-              <WifiOff className="w-5 h-5 text-amber-400 shrink-0" />
-              <div>
-                <strong>Backend non détecté :</strong> Pour convertir les vidéos YouTube et injecter les couvertures MP3, assurez-vous que le serveur local Node.js est lancé (<code>npm start</code>) ou configurez votre URL distante.
-              </div>
-            </div>
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="px-3.5 py-1.5 rounded-xl font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shrink-0 transition-colors"
-            >
-              Paramètres
-            </button>
-          </div>
-        )}
-
-        {/* Global Error Banner */}
+        {/* Error Banner */}
         {error && (
-          <div className="mb-8 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-start gap-3 shadow-lg max-w-3xl mx-auto w-full animate-fade-in">
-            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-            <div className="flex-1 leading-relaxed">
-              <strong>Une erreur est survenue :</strong> {error}
-            </div>
+          <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+            <span>{error}</span>
           </div>
         )}
 
-        {/* View Flow: Either Conversion Progress OR Video Search & Selection */}
+        {/* Content */}
         {currentJob ? (
           <ProgressCard job={currentJob} onReset={handleReset} />
         ) : (
-          <>
-            {/* Step 1: Input URL */}
+          <div className="space-y-4">
             <UrlInput onSearch={handleSearch} isLoading={isLoading} />
 
-            {/* Step 2: Video Card & Format Selector (once searched) */}
             {videoData && (
-              <div className="mt-8 space-y-6 animate-fade-in">
+              <>
                 <VideoCard
                   video={videoData}
                   selectedFormat={selectedFormat}
                   onSelectFormat={(fmt) => setSelectedFormat(fmt)}
                 />
 
-                {/* Step 3: Available Qualities Selector */}
                 <QualitySelector
                   video={videoData}
                   format={selectedFormat}
                   onStartConversion={handleStartConversion}
                   isConverting={isConverting}
                 />
-              </div>
+              </>
             )}
-          </>
+          </div>
         )}
 
       </main>
@@ -229,7 +201,6 @@ export function App() {
         onBackendUrlChanged={verifyBackend}
       />
 
-      {/* Footer */}
       <Footer />
 
     </div>

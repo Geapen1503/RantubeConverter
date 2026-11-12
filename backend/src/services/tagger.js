@@ -95,3 +95,4 @@ export async function embedMp3Metadata(mp3FilePath, metadata) {
     return false;
   }
 }
+

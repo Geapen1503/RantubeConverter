@@ -67,3 +67,4 @@ export const config = {
   jobTimeoutMs: 30 * 60 * 1000, // 30 minutes before cleaning up temporary files
   maxDurationSeconds: 14400 // 4 hours limit
 };
+
