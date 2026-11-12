@@ -1,33 +1,56 @@
 /**
  * API Service for RanTube Converter
- * Fully automated backend resolution - zero configuration required for the user
+ * Supports dynamic backend URL configuration for GitHub Pages hosting
  */
 
-export function getBaseApiUrl() {
-  if (typeof window === 'undefined') return '';
+const STORAGE_KEY = 'rantube_backend_url';
 
-  // If running on GitHub Pages (or external host), automatically connect to local server on PC
-  const hostname = window.location.hostname;
-  if (hostname.includes('github.io') || window.location.protocol === 'file:') {
-    return 'http://localhost:5000';
+export function getStoredBackendUrl() {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem(STORAGE_KEY) || '';
+}
+
+export function saveStoredBackendUrl(url) {
+  if (typeof window === 'undefined') return;
+  const clean = url ? url.trim().replace(/\/+$/, '') : '';
+  if (clean) {
+    localStorage.setItem(STORAGE_KEY, clean);
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+export function getBaseApiUrl() {
+  const customUrl = getStoredBackendUrl();
+  if (customUrl) {
+    return customUrl;
   }
 
-  // Same origin (Node demo or Vite proxy on localhost)
+  // If hosted on GitHub Pages or file protocol, default to local backend or ask user
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname.includes('github.io') || window.location.protocol === 'file:') {
+      // GitHub Pages needs an explicit backend host
+      return 'http://localhost:5000';
+    }
+  }
+
+  // Same origin (Node demo or Vite proxy)
   return '';
 }
 
 /**
  * Health check
  */
-export async function checkHealth() {
-  const base = getBaseApiUrl();
+export async function checkHealth(customBaseUrl = null) {
+  const base = customBaseUrl !== null ? customBaseUrl : getBaseApiUrl();
   const endpoint = `${base}/api/health`;
 
   try {
     const res = await fetch(endpoint, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
-      signal: AbortSignal.timeout(3000)
+      signal: AbortSignal.timeout(4000)
     });
     if (!res.ok) throw new Error(`Status ${res.status}`);
     return await res.json();
@@ -54,7 +77,7 @@ export async function fetchVideoInfo(url) {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error || 'Erreur lors de la récupération des informations de la vidéo.');
+    throw new Error(data.error || 'Erreur lors de la récupération des informations vidéo.');
   }
 
   return data;
@@ -128,6 +151,7 @@ export function subscribeToProgress(jobId, onUpdate, onError) {
   };
 
   eventSource.onerror = (err) => {
+    console.warn('SSE connection error, falling back to polling if needed');
     if (onError) onError(err);
     eventSource.close();
   };

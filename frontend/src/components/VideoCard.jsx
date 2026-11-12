@@ -1,54 +1,90 @@
 import React from 'react';
-import { Music, Video, User, Clock, CheckCircle } from 'lucide-react';
+import { Music, Video, User, Clock, Eye, Calendar, Disc, CheckCircle } from 'lucide-react';
 
 export function VideoCard({ video, selectedFormat, onSelectFormat }) {
   if (!video) return null;
 
+  // Format view count
+  const formattedViews = new Intl.NumberFormat('fr-FR').format(video.viewCount);
+
+  // Format date if YYYYMMDD
+  let formattedDate = video.uploadDate;
+  if (video.uploadDate && video.uploadDate.length === 8) {
+    const y = video.uploadDate.substring(0, 4);
+    const m = video.uploadDate.substring(4, 6);
+    const d = video.uploadDate.substring(6, 8);
+    formattedDate = `${d}/${m}/${y}`;
+  }
+
   return (
-    <div className="w-full max-w-3xl mx-auto glass-panel rounded-3xl p-5 sm:p-6 shadow-2xl border border-dark-700/60">
-      <div className="flex flex-col sm:flex-row gap-5 items-center">
+    <div className="w-full max-w-4xl mx-auto glass-panel rounded-3xl p-5 sm:p-7 shadow-2xl border border-dark-700/60 transition-all">
+      <div className="flex flex-col lg:flex-row gap-6 items-center">
         
-        {/* Thumbnail Preview */}
-        <div className="relative group w-full sm:w-60 aspect-video rounded-2xl overflow-hidden shadow-xl bg-dark-900 border border-dark-700 shrink-0">
+        {/* Thumbnail Preview with Duration */}
+        <div className="relative group w-full lg:w-72 aspect-video rounded-2xl overflow-hidden shadow-xl bg-dark-900 border border-dark-700 shrink-0">
           <img
             src={video.thumbnail}
             alt={video.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
+              // Fallback to hqdefault if maxresdefault 404s
               if (video.id && !e.target.src.includes('hqdefault')) {
                 e.target.src = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
               }
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-dark-950/70 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-transparent to-transparent pointer-events-none" />
           
-          <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-dark-950/90 text-[11px] font-bold text-white border border-dark-700/80 flex items-center gap-1 shadow-md">
+          {/* Duration Badge */}
+          <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-dark-950/90 text-[11px] font-bold text-white border border-dark-700/80 flex items-center gap-1 shadow-md">
             <Clock className="w-3 h-3 text-rose-400" />
             <span>{video.duration}</span>
+          </div>
+
+          {/* Square Cover Preview Pill */}
+          <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-rose-600/90 text-[10px] font-bold text-white shadow-md flex items-center gap-1 backdrop-blur-sm">
+            <Disc className="w-3 h-3" />
+            <span>Cover HD</span>
           </div>
         </div>
 
         {/* Video Info Details */}
-        <div className="flex-1 w-full flex flex-col justify-between self-stretch">
+        <div className="flex-1 w-full flex flex-col justify-between">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white line-clamp-2 leading-snug">
+            <h2 className="text-lg sm:text-xl font-bold text-white line-clamp-2 leading-snug mb-3 hover:text-rose-400 transition-colors">
               {video.title}
             </h2>
 
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1.5">
-              <User className="w-3.5 h-3.5 text-rose-400" />
-              <span>{video.uploader}</span>
+            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs sm:text-sm text-slate-400 mb-5">
+              <div className="flex items-center gap-1.5 text-slate-300 font-medium">
+                <User className="w-4 h-4 text-rose-400" />
+                <span>{video.uploader}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Eye className="w-4 h-4 text-slate-500" />
+                <span>{formattedViews} vues</span>
+              </div>
+              {formattedDate && (
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-slate-500" />
+                  <span>{formattedDate}</span>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Format Toggle (MP3 vs MP4) */}
-          <div className="pt-4 mt-3 border-t border-dark-800">
-            <div className="grid grid-cols-2 gap-3 max-w-xs">
+          <div className="pt-3 border-t border-dark-800">
+            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
+              Format de sortie souhaité :
+            </label>
+            <div className="grid grid-cols-2 gap-3 max-w-sm">
               
+              {/* MP3 Audio Button */}
               <button
                 type="button"
                 onClick={() => onSelectFormat('mp3')}
-                className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all border ${
+                className={`flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-bold text-sm transition-all border ${
                   selectedFormat === 'mp3'
                     ? 'bg-gradient-to-r from-rose-600 to-rose-500 text-white border-rose-400/30 shadow-lg shadow-rose-600/25 scale-[1.02]'
                     : 'bg-dark-850 hover:bg-dark-800 text-slate-300 border-dark-700/80'
@@ -56,13 +92,14 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
               >
                 <Music className="w-4 h-4" />
                 <span>Audio (MP3)</span>
-                {selectedFormat === 'mp3' && <CheckCircle className="w-3.5 h-3.5 ml-0.5" />}
+                {selectedFormat === 'mp3' && <CheckCircle className="w-3.5 h-3.5 ml-1" />}
               </button>
 
+              {/* MP4 Video Button */}
               <button
                 type="button"
                 onClick={() => onSelectFormat('mp4')}
-                className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all border ${
+                className={`flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-bold text-sm transition-all border ${
                   selectedFormat === 'mp4'
                     ? 'bg-gradient-to-r from-rose-600 to-rose-500 text-white border-rose-400/30 shadow-lg shadow-rose-600/25 scale-[1.02]'
                     : 'bg-dark-850 hover:bg-dark-800 text-slate-300 border-dark-700/80'
@@ -70,7 +107,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
               >
                 <Video className="w-4 h-4" />
                 <span>Vidéo (MP4)</span>
-                {selectedFormat === 'mp4' && <CheckCircle className="w-3.5 h-3.5 ml-0.5" />}
+                {selectedFormat === 'mp4' && <CheckCircle className="w-3.5 h-3.5 ml-1" />}
               </button>
 
             </div>
