@@ -1,0 +1,26 @@
+{
+  "name": "rantube-convertor",
+  "version": "1.0.0",
+  "description": "Convertisseur YouTube MP4 (jusqu'en 4K) et MP3 (jusqu'à 320kbps avec pochette ID3) compatible GitHub Pages",
+  "private": true,
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "build": "cd frontend && npm run build",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend"
+  },
+  "keywords": [
+    "youtube",
+    "mp3",
+    "mp4",
+    "converter",
+    "github-pages",
+    "ffmpeg",
+    "id3-cover"
+  ],
+  "author": "Theo",
+  "license": "MIT"
+}
