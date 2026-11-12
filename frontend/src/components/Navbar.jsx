@@ -1,5 +1,4 @@
 import React from 'react';
-import { Settings } from 'lucide-react';
 
 function YoutubeIcon(props) {
   return (
@@ -9,35 +8,33 @@ function YoutubeIcon(props) {
   );
 }
 
-export function Navbar({ backendStatus, onOpenSettings }) {
+export function Navbar({ backendStatus }) {
   return (
-    <header className="border-b border-zinc-850 bg-zinc-950/40 backdrop-blur-md">
-      <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-dark-800/60 bg-dark-950/80 backdrop-blur-xl">
+      <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
         
-        {/* Minimal Brand */}
-        <div className="flex items-center gap-2.5">
-          <div className="text-rose-500">
+        {/* Brand / Logo */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-500 shadow-md shadow-rose-500/20 text-white">
             <YoutubeIcon />
           </div>
-          <span className="font-semibold text-base text-zinc-100 tracking-tight">
+          <span className="font-bold text-lg tracking-tight text-white">
             RanTube
           </span>
         </div>
 
-        {/* Status dot & Settings */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onOpenSettings}
-            className="flex items-center gap-2 text-xs text-zinc-400 hover:text-zinc-200 px-2.5 py-1.5 rounded-lg hover:bg-zinc-900 transition-colors"
-            title="Paramètres de connexion"
-          >
-            <span
-              className={`w-2 h-2 rounded-full ${
-                backendStatus === 'online' ? 'bg-emerald-500' : 'bg-amber-500'
-              }`}
-            />
-            <Settings className="w-4 h-4" />
-          </button>
+        {/* Status Indicator */}
+        <div className="flex items-center gap-2 text-xs font-medium">
+          <span
+            className={`w-2 h-2 rounded-full ${
+              backendStatus === 'online'
+                ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]'
+                : 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]'
+            }`}
+          />
+          <span className="text-slate-400 text-[11px]">
+            {backendStatus === 'online' ? 'Connecté' : 'En attente'}
+          </span>
         </div>
 
       </div>

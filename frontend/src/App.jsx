@@ -4,14 +4,11 @@ import { UrlInput } from './components/UrlInput';
 import { VideoCard } from './components/VideoCard';
 import { QualitySelector } from './components/QualitySelector';
 import { ProgressCard } from './components/ProgressCard';
-import { SettingsModal } from './components/SettingsModal';
-import { Footer } from './components/Footer';
 import { checkHealth, fetchVideoInfo, startConversion, subscribeToProgress, getJobStatus } from './services/api';
 import { AlertCircle } from 'lucide-react';
 
 export function App() {
   const [backendStatus, setBackendStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
   // Video search & selection state
   const [videoData, setVideoData] = useState(null);
@@ -147,20 +144,17 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#090a0f] text-zinc-100">
+    <div className="min-h-screen flex flex-col justify-between bg-dark-950 text-slate-100">
       
       {/* Navigation */}
-      <Navbar
-        backendStatus={backendStatus}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
+      <Navbar backendStatus={backendStatus} />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8 sm:py-12 flex flex-col justify-center">
         
         {/* Error Banner */}
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+          <div className="mb-5 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 max-w-3xl mx-auto w-full">
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
             <span>{error}</span>
           </div>
@@ -174,7 +168,7 @@ export function App() {
             <UrlInput onSearch={handleSearch} isLoading={isLoading} />
 
             {videoData && (
-              <>
+              <div className="space-y-4 animate-fade-in">
                 <VideoCard
                   video={videoData}
                   selectedFormat={selectedFormat}
@@ -187,21 +181,12 @@ export function App() {
                   onStartConversion={handleStartConversion}
                   isConverting={isConverting}
                 />
-              </>
+              </div>
             )}
           </div>
         )}
 
       </main>
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onBackendUrlChanged={verifyBackend}
-      />
-
-      <Footer />
 
     </div>
   );

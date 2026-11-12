@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Check } from 'lucide-react';
+import { Download, Image, Check, Film, Music2 } from 'lucide-react';
 
 export function QualitySelector({
   video,
@@ -29,46 +29,101 @@ export function QualitySelector({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mt-3">
+    <div className="w-full max-w-3xl mx-auto glass-panel rounded-3xl p-6 shadow-2xl border border-dark-700/60 mt-4">
+      
+      {/* Title */}
+      <div className="flex items-center justify-between pb-3 border-b border-dark-800 mb-5">
+        <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+          {isMp3 ? (
+            <>
+              <Music2 className="w-4 h-4 text-rose-400" />
+              <span>Qualité Audio (MP3)</span>
+            </>
+          ) : (
+            <>
+              <Film className="w-4 h-4 text-rose-400" />
+              <span>Résolution Vidéo (MP4)</span>
+            </>
+          )}
+        </h3>
+
+        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-dark-800 text-slate-300 border border-dark-700">
+          {availableQualities ? availableQualities.length : 0} options
+        </span>
+      </div>
+
       <form onSubmit={handleSubmit}>
         
         {/* Quality Options Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mb-5">
           {availableQualities && availableQualities.map((item) => {
             const isSelected = selectedQuality === item.quality;
-            const shortLabel = item.label || item.quality;
             return (
-              <button
-                type="button"
+              <div
                 key={item.quality}
                 onClick={() => setSelectedQuality(item.quality)}
-                className={`py-2 px-3 rounded-lg text-xs font-medium border text-left flex items-center justify-between transition-colors ${
+                className={`cursor-pointer p-3.5 rounded-2xl border transition-all flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-rose-500/10 border-rose-500/50 text-rose-300'
-                    : 'bg-zinc-850/60 hover:bg-zinc-850 border-zinc-800 text-zinc-300'
+                    ? 'bg-rose-500/10 border-rose-500/60 shadow-lg shadow-rose-500/10'
+                    : 'bg-dark-850 hover:bg-dark-800 border-dark-750 hover:border-dark-700'
                 }`}
               >
-                <span>{shortLabel}</span>
-                {isSelected && <Check className="w-3.5 h-3.5 text-rose-400" />}
-              </button>
+                <div className="flex items-start justify-between">
+                  <div className="font-bold text-sm text-white flex items-center gap-1.5">
+                    <span>{item.label || item.quality}</span>
+                    {isSelected && (
+                      <span className="flex items-center justify-center w-3.5 h-3.5 rounded-full bg-rose-500 text-white">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Badges */}
+                  <div className="flex items-center gap-1">
+                    {item.fps && item.fps > 30 && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        {item.fps} FPS
+                      </span>
+                    )}
+                    {item.isHdr && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                        HDR
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {item.filesizeFormatted && (
+                  <div className="mt-2 pt-2 border-t border-dark-800 text-[11px] text-slate-400 flex justify-between">
+                    <span>Taille :</span>
+                    <span className="font-semibold text-slate-300">{item.filesizeFormatted}</span>
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
 
         {/* MP3 Cover Art Toggle */}
         {isMp3 && (
-          <div className="flex items-center justify-between py-2.5 px-3 mb-4 rounded-lg bg-zinc-850/60 border border-zinc-800">
-            <span className="text-xs text-zinc-300 font-medium">
-              Intégrer la pochette YouTube
-            </span>
-            <label className="relative inline-flex items-center cursor-pointer">
+          <div className="mb-5 p-3.5 rounded-2xl bg-dark-850/90 border border-dark-700/80 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 shrink-0">
+                <Image className="w-4 h-4" />
+              </div>
+              <span className="font-semibold text-xs sm:text-sm text-white">
+                Intégrer la pochette YouTube dans le MP3 (Cover ID3v2)
+              </span>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
               <input
                 type="checkbox"
                 checked={embedThumbnail}
                 onChange={(e) => setEmbedThumbnail(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-9 h-5 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600"></div>
+              <div className="w-10 h-5.5 bg-dark-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-rose-600"></div>
             </label>
           </div>
         )}
@@ -77,15 +132,18 @@ export function QualitySelector({
         <button
           type="submit"
           disabled={isConverting}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors disabled:opacity-40"
+          className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl font-bold text-sm bg-gradient-to-r from-rose-600 via-rose-500 to-rose-600 hover:opacity-95 text-white shadow-xl shadow-rose-600/25 transition-all transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Download className="w-4 h-4" />
           <span>
-            {isMp3 ? `Convertir en MP3 (${selectedQuality})` : `Télécharger en MP4 (${selectedQuality})`}
+            {isMp3
+              ? `Télécharger en MP3 (${selectedQuality.toUpperCase()})`
+              : `Télécharger en MP4 (${selectedQuality})`}
           </span>
         </button>
 
       </form>
+
     </div>
   );
 }
