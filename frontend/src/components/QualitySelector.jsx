@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Sparkles, Image, Check, Info, ShieldCheck, Film, Music2 } from 'lucide-react';
+import { Download, Sparkles, Image, Check, Film, Music2 } from 'lucide-react';
 
 export function QualitySelector({
   video,
@@ -39,24 +39,24 @@ export function QualitySelector({
             {isMp3 ? (
               <>
                 <Music2 className="w-5 h-5 text-rose-400" />
-                <span>Sélectionnez le débit audio (MP3)</span>
+                <span>Select Audio Bitrate (MP3)</span>
               </>
             ) : (
               <>
                 <Film className="w-5 h-5 text-rose-400" />
-                <span>Sélectionnez la résolution vidéo (MP4)</span>
+                <span>Select Video Resolution (MP4)</span>
               </>
             )}
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
             {isMp3
-              ? 'Toutes les qualités MP3 sont encodées avec le codec audio LAME haute fidélité.'
-              : 'Toutes les résolutions disponibles pour cette vidéo sont listées ci-dessous.'}
+              ? 'All MP3 qualities are encoded using high-fidelity LAME audio codec.'
+              : 'All available resolutions for this video are listed below.'}
           </p>
         </div>
 
         <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-dark-800 text-slate-300 border border-dark-700 w-fit">
-          {availableQualities ? availableQualities.length : 0} options disponibles
+          {availableQualities ? availableQualities.length : 0} options available
         </span>
       </div>
 
@@ -109,7 +109,7 @@ export function QualitySelector({
                 {/* File size estimate */}
                 {item.filesizeFormatted && (
                   <div className="mt-3 pt-2 border-t border-dark-800 flex items-center justify-between text-xs text-slate-400">
-                    <span>Taille estimée :</span>
+                    <span>Estimated size:</span>
                     <span className="font-semibold text-slate-300">{item.filesizeFormatted}</span>
                   </div>
                 )}
@@ -128,14 +128,14 @@ export function QualitySelector({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-sm text-white">
-                    Intégrer la pochette de la vidéo dans le MP3
+                    Embed video thumbnail into MP3
                   </span>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     ID3v2 Cover
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  La miniature YouTube est recadrée au format carré HD et injectée dans les métadonnées. Elle s'affichera sur votre lecteur MP3, smartphone, CarPlay, etc.
+                  The YouTube thumbnail is cropped to square HD and embedded into metadata. It will display on your MP3 player, smartphone, CarPlay, etc.
                 </p>
               </div>
             </div>
@@ -162,8 +162,8 @@ export function QualitySelector({
           <Download className="w-5 h-5" />
           <span>
             {isMp3
-              ? `Convertir en MP3 (${selectedQuality.toUpperCase()}) avec pochette`
-              : `Télécharger la vidéo en MP4 (${selectedQuality})`}
+              ? `Convert to MP3 (${selectedQuality.toUpperCase()}) with cover art`
+              : `Download video in MP4 (${selectedQuality})`}
           </span>
         </button>
 

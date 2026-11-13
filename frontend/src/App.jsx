@@ -4,15 +4,11 @@ import { UrlInput } from './components/UrlInput';
 import { VideoCard } from './components/VideoCard';
 import { QualitySelector } from './components/QualitySelector';
 import { ProgressCard } from './components/ProgressCard';
-import { SettingsModal } from './components/SettingsModal';
 import { Footer } from './components/Footer';
-import { checkHealth, fetchVideoInfo, startConversion, subscribeToProgress, getJobStatus } from './services/api';
-import { AlertCircle, WifiOff } from 'lucide-react';
+import { fetchVideoInfo, startConversion, subscribeToProgress, getJobStatus } from './services/api';
+import { AlertCircle } from 'lucide-react';
 
 export function App() {
-  const [backendStatus, setBackendStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  
   // Video search & selection state
   const [videoData, setVideoData] = useState(null);
   const [selectedFormat, setSelectedFormat] = useState('mp3');
@@ -25,26 +21,6 @@ export function App() {
 
   const unsubscribeRef = useRef(null);
   const pollingRef = useRef(null);
-
-  // Health check on mount and interval
-  const verifyBackend = async () => {
-    try {
-      const res = await checkHealth();
-      if (res && res.status === 'ok') {
-        setBackendStatus('online');
-      } else {
-        setBackendStatus('offline');
-      }
-    } catch {
-      setBackendStatus('offline');
-    }
-  };
-
-  useEffect(() => {
-    verifyBackend();
-    const interval = setInterval(verifyBackend, 15000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Cleanup SSE & Polling on unmount
   useEffect(() => {
@@ -66,7 +42,7 @@ export function App() {
       setVideoData(data);
     } catch (err) {
       console.error('Fetch video info error:', err);
-      setError(err.message || 'Impossible de récupérer la vidéo. Assurez-vous que le lien est valide.');
+      setError(err.message || 'Unable to fetch video details. Please ensure the link is valid.');
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +73,7 @@ export function App() {
         id: jobId,
         status: 'queued',
         progress: 5,
-        phase: 'Préparation du téléchargement...',
+        phase: 'Preparing download...',
         format,
         embedThumbnail,
         videoTitle: videoData.title,
@@ -136,7 +112,7 @@ export function App() {
 
     } catch (err) {
       console.error('Start conversion error:', err);
-      setError(err.message || 'Impossible de démarrer la conversion.');
+      setError(err.message || 'Failed to start conversion.');
       setIsConverting(false);
     }
   };
@@ -155,38 +131,17 @@ export function App() {
     <div className="min-h-screen flex flex-col justify-between bg-dark-950 text-slate-100">
       
       {/* Navigation */}
-      <Navbar
-        backendStatus={backendStatus}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
+      <Navbar />
 
       {/* Main Container */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 sm:py-12 flex flex-col">
         
-        {/* Offline Warning Banner (if backend is unreachable) */}
-        {backendStatus === 'offline' && (
-          <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center gap-2.5">
-              <WifiOff className="w-5 h-5 text-amber-400 shrink-0" />
-              <div>
-                <strong>Backend non détecté :</strong> Pour convertir les vidéos YouTube et injecter les couvertures MP3, assurez-vous que le serveur local Node.js est lancé (<code>npm start</code>) ou configurez votre URL distante.
-              </div>
-            </div>
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="px-3.5 py-1.5 rounded-xl font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shrink-0 transition-colors"
-            >
-              Paramètres
-            </button>
-          </div>
-        )}
-
         {/* Global Error Banner */}
         {error && (
           <div className="mb-8 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-start gap-3 shadow-lg max-w-3xl mx-auto w-full animate-fade-in">
             <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             <div className="flex-1 leading-relaxed">
-              <strong>Une erreur est survenue :</strong> {error}
+              <strong>Error:</strong> {error}
             </div>
           </div>
         )}
@@ -221,13 +176,6 @@ export function App() {
         )}
 
       </main>
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onBackendUrlChanged={verifyBackend}
-      />
 
       {/* Footer */}
       <Footer />

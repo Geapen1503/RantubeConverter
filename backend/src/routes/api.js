@@ -34,12 +34,12 @@ apiRouter.post('/info', async (req, res) => {
   try {
     const { url } = req.body;
     if (!url || typeof url !== 'string') {
-      return res.status(400).json({ error: 'URL manquante ou invalide.' });
+      return res.status(400).json({ error: 'Missing or invalid URL.' });
     }
 
     const trimmedUrl = url.trim();
     if (!YOUTUBE_URL_REGEX.test(trimmedUrl)) {
-      return res.status(400).json({ error: 'Veuillez fournir un lien YouTube valide (youtube.com ou youtu.be).' });
+      return res.status(400).json({ error: 'Please provide a valid YouTube URL (youtube.com or youtu.be).' });
     }
 
     console.log(`[API] Fetching info for: ${trimmedUrl}`);
@@ -48,7 +48,7 @@ apiRouter.post('/info', async (req, res) => {
   } catch (error) {
     console.error('[API] /info error:', error.message);
     res.status(500).json({
-      error: 'Impossible de récupérer les informations de la vidéo. Vérifiez le lien ou réessayez.',
+      error: 'Unable to fetch video details. Please verify the URL or try again.',
       details: error.message
     });
   }
@@ -71,7 +71,7 @@ apiRouter.post('/convert', async (req, res) => {
     } = req.body;
 
     if (!url || !YOUTUBE_URL_REGEX.test(url.trim())) {
-      return res.status(400).json({ error: 'Lien YouTube invalide.' });
+      return res.status(400).json({ error: 'Invalid YouTube URL.' });
     }
 
     const cleanFormat = format.toLowerCase() === 'mp4' ? 'mp4' : 'mp3';
@@ -110,7 +110,7 @@ apiRouter.post('/convert', async (req, res) => {
 
     res.json({
       jobId,
-      message: 'Conversion démarrée avec succès.'
+      message: 'Conversion started successfully.'
     });
   } catch (error) {
     console.error('[API] /convert error:', error.message);
@@ -125,7 +125,7 @@ apiRouter.post('/convert', async (req, res) => {
 apiRouter.get('/jobs/:id', (req, res) => {
   const job = jobManager.getJob(req.params.id);
   if (!job) {
-    return res.status(404).json({ error: 'Tâche introuvable ou expirée.' });
+    return res.status(404).json({ error: 'Job not found or expired.' });
   }
   res.json(job);
 });
@@ -138,7 +138,7 @@ apiRouter.get('/jobs/:id/events', (req, res) => {
   const jobId = req.params.id;
   const job = jobManager.getJob(jobId);
   if (!job) {
-    return res.status(404).json({ error: 'Tâche introuvable.' });
+    return res.status(404).json({ error: 'Job not found.' });
   }
 
   res.setHeader('Content-Type', 'text/event-stream');
@@ -156,11 +156,11 @@ apiRouter.get('/jobs/:id/events', (req, res) => {
 apiRouter.get('/download/:id', (req, res) => {
   const job = jobManager.getJob(req.params.id);
   if (!job) {
-    return res.status(404).send('Fichier introuvable ou lien expiré.');
+    return res.status(404).send('File not found or link expired.');
   }
 
   if (job.status !== 'completed' || !job.filePath || !fs.existsSync(job.filePath)) {
-    return res.status(400).send('Le fichier n\'est pas encore prêt ou a été supprimé.');
+    return res.status(400).send('File is not ready or has been deleted.');
   }
 
   const stat = fs.statSync(job.filePath);

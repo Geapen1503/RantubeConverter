@@ -1,5 +1,4 @@
 import React from 'react';
-import { Settings, Wifi, WifiOff, Sparkles } from 'lucide-react';
 
 function YoutubeIcon(props) {
   return (
@@ -9,7 +8,7 @@ function YoutubeIcon(props) {
   );
 }
 
-export function Navbar({ backendStatus, onOpenSettings }) {
+export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-dark-800/80 bg-dark-950/80 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -28,50 +27,8 @@ export function Navbar({ backendStatus, onOpenSettings }) {
                 PRO
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 -mt-0.5 tracking-wide">Convertisseur MP4 & MP3 HD</p>
+            <p className="text-[10px] text-slate-400 -mt-0.5 tracking-wide">HD MP4 & MP3 Converter</p>
           </div>
-        </div>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          {/* Backend Status Pill */}
-          <button
-            onClick={onOpenSettings}
-            className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${
-              backendStatus === 'online'
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-                : backendStatus === 'offline'
-                ? 'bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20 animate-pulse'
-                : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-            }`}
-            title="Cliquez pour configurer le serveur backend"
-          >
-            {backendStatus === 'online' ? (
-              <>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>Backend actif</span>
-              </>
-            ) : backendStatus === 'offline' ? (
-              <>
-                <WifiOff className="w-3.5 h-3.5" />
-                <span>Backend hors-ligne</span>
-              </>
-            ) : (
-              <>
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span>Connexion...</span>
-              </>
-            )}
-          </button>
-
-          {/* Settings Button */}
-          <button
-            onClick={onOpenSettings}
-            className="p-2 text-slate-400 hover:text-slate-100 hover:bg-dark-800 rounded-lg transition-colors border border-transparent hover:border-dark-700"
-            title="Paramètres API & GitHub Pages"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
         </div>
 
       </div>

@@ -139,11 +139,11 @@ export async function getVideoInfo(url) {
 
   // Predefined standard MP3 bitrates with estimated size based on duration
   const mp3Bitrates = [
-    { bitrate: '320k', label: '320 kbps (Qualité Studio)', note: 'Recommandé pour casques & enceintes Hi-Fi' },
-    { bitrate: '256k', label: '256 kbps (Très Haute Qualité)', note: 'Excellent compromis audiophile' },
-    { bitrate: '192k', label: '192 kbps (Haute Qualité)', note: 'Recommandé (optimal pour YouTube)' },
-    { bitrate: '128k', label: '128 kbps (Qualité Standard)', note: 'Fichiers légers' },
-    { bitrate: '64k',  label: '64 kbps (Éco / Podcasts)', note: 'Poids ultra réduit' }
+    { bitrate: '320k', label: '320 kbps (Studio Quality)', note: 'Recommended for Hi-Fi headphones & speakers' },
+    { bitrate: '256k', label: '256 kbps (Very High Quality)', note: 'Audiophile grade' },
+    { bitrate: '192k', label: '192 kbps (High Quality)', note: 'Recommended (optimal for YouTube)' },
+    { bitrate: '128k', label: '128 kbps (Standard Quality)', note: 'Lightweight files' },
+    { bitrate: '64k',  label: '64 kbps (Eco / Podcasts)', note: 'Ultra-small file size' }
   ];
 
   const audioQualities = mp3Bitrates.map(q => {
@@ -169,8 +169,8 @@ export async function getVideoInfo(url) {
   return {
     id: data.id,
     url,
-    title: data.title || 'Vidéo YouTube',
-    uploader: data.uploader || data.channel || 'Artiste inconnu',
+    title: data.title || 'YouTube Video',
+    uploader: data.uploader || data.channel || 'Unknown Artist',
     uploaderUrl: data.uploader_url || data.channel_url || null,
     duration: formatDuration(durationSec),
     durationSeconds: durationSec,
@@ -226,7 +226,7 @@ export async function processVideoJob(job, updateProgress) {
 
   updateProgress({
     status: 'downloading',
-    phase: 'Téléchargement du flux vidéo et audio...',
+    phase: 'Downloading video and audio streams...',
     progress: 10
   });
 
@@ -239,7 +239,7 @@ export async function processVideoJob(job, updateProgress) {
         const overallProgress = Math.min(85, Math.round(10 + prog.percent * 0.75));
         updateProgress({
           status: 'downloading',
-          phase: `Téléchargement du flux (${prog.percent.toFixed(1)}%)...`,
+          phase: `Downloading stream (${prog.percent.toFixed(1)}%)...`,
           progress: overallProgress,
           speed: prog.speed,
           eta: prog.eta
@@ -247,7 +247,7 @@ export async function processVideoJob(job, updateProgress) {
       } else if (line.includes('[Merger]') || line.includes('Merging formats')) {
         updateProgress({
           status: 'converting',
-          phase: 'Fusion et finalisation du fichier MP4 avec FFmpeg...',
+          phase: 'Merging and finalizing MP4 with FFmpeg...',
           progress: 88,
           speed: null,
           eta: null
@@ -263,7 +263,7 @@ export async function processVideoJob(job, updateProgress) {
     const files = fs.readdirSync(config.tempDir);
     const matched = files.find(f => f.startsWith(job.id) && f.endsWith('.mp4'));
     if (!matched) {
-      throw new Error('Le fichier MP4 final est introuvable après la conversion.');
+      throw new Error('The final MP4 file could not be found after conversion.');
     }
     return {
       filePath: path.join(config.tempDir, matched),
@@ -306,7 +306,7 @@ export async function processAudioJob(job, updateProgress) {
 
   updateProgress({
     status: 'downloading',
-    phase: 'Téléchargement de la meilleure piste audio...',
+    phase: 'Downloading best audio stream...',
     progress: 10
   });
 
@@ -319,7 +319,7 @@ export async function processAudioJob(job, updateProgress) {
         const overallProgress = Math.min(70, Math.round(10 + prog.percent * 0.60));
         updateProgress({
           status: 'downloading',
-          phase: `Téléchargement audio (${prog.percent.toFixed(1)}%)...`,
+          phase: `Downloading audio (${prog.percent.toFixed(1)}%)...`,
           progress: overallProgress,
           speed: prog.speed,
           eta: prog.eta
@@ -327,7 +327,7 @@ export async function processAudioJob(job, updateProgress) {
       } else if (line.includes('[ExtractAudio]') || line.includes('Destination')) {
         updateProgress({
           status: 'converting',
-          phase: `Conversion en MP3 (${bitrate})...`,
+          phase: `Converting to MP3 (${bitrate})...`,
           progress: 75,
           speed: null,
           eta: null
@@ -344,7 +344,7 @@ export async function processAudioJob(job, updateProgress) {
     const files = fs.readdirSync(config.tempDir);
     const matched = files.find(f => f.startsWith(job.id) && f.endsWith('.mp3'));
     if (!matched) {
-      throw new Error('Le fichier MP3 converti est introuvable.');
+      throw new Error('The converted MP3 file could not be found.');
     }
     finalFilePath = path.join(config.tempDir, matched);
   }
@@ -353,7 +353,7 @@ export async function processAudioJob(job, updateProgress) {
   if (job.embedThumbnail !== false) {
     updateProgress({
       status: 'tagging',
-      phase: 'Intégration de la miniature YouTube en pochette d’album...',
+      phase: 'Embedding YouTube thumbnail as album cover...',
       progress: 90
     });
 

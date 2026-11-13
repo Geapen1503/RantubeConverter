@@ -24,7 +24,7 @@ class JobManager extends EventEmitter {
       thumbnailUrl: jobData.thumbnailUrl || null,
       status: 'queued', // queued | downloading | converting | tagging | completed | failed
       progress: 0,
-      phase: 'Initialisation de la requête...',
+      phase: 'Initializing request...',
       speed: null,
       eta: null,
       filePath: null,
@@ -58,8 +58,8 @@ class JobManager extends EventEmitter {
   failJob(jobId, errorMsg) {
     return this.updateJob(jobId, {
       status: 'failed',
-      phase: 'Erreur lors du traitement',
-      error: errorMsg || 'Une erreur inconnue est survenue'
+      phase: 'Processing error',
+      error: errorMsg || 'An unknown error occurred'
     });
   }
 
@@ -67,7 +67,7 @@ class JobManager extends EventEmitter {
     return this.updateJob(jobId, {
       status: 'completed',
       progress: 100,
-      phase: 'Prêt pour le téléchargement !',
+      phase: 'Ready for download!',
       completedAt: Date.now(),
       ...fileData
     });

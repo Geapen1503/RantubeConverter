@@ -5,7 +5,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
   if (!video) return null;
 
   // Format view count
-  const formattedViews = new Intl.NumberFormat('fr-FR').format(video.viewCount);
+  const formattedViews = new Intl.NumberFormat('en-US').format(video.viewCount);
 
   // Format date if YYYYMMDD
   let formattedDate = video.uploadDate;
@@ -13,7 +13,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
     const y = video.uploadDate.substring(0, 4);
     const m = video.uploadDate.substring(4, 6);
     const d = video.uploadDate.substring(6, 8);
-    formattedDate = `${d}/${m}/${y}`;
+    formattedDate = `${y}-${m}-${d}`;
   }
 
   return (
@@ -44,7 +44,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
           {/* Square Cover Preview Pill */}
           <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-rose-600/90 text-[10px] font-bold text-white shadow-md flex items-center gap-1 backdrop-blur-sm">
             <Disc className="w-3 h-3" />
-            <span>Cover HD</span>
+            <span>HD Cover</span>
           </div>
         </div>
 
@@ -62,7 +62,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
               </div>
               <div className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4 text-slate-500" />
-                <span>{formattedViews} vues</span>
+                <span>{formattedViews} views</span>
               </div>
               {formattedDate && (
                 <div className="flex items-center gap-1.5">
@@ -76,7 +76,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
           {/* Format Toggle (MP3 vs MP4) */}
           <div className="pt-3 border-t border-dark-800">
             <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
-              Format de sortie souhaité :
+              Select Output Format:
             </label>
             <div className="grid grid-cols-2 gap-3 max-w-sm">
               
@@ -106,7 +106,7 @@ export function VideoCard({ video, selectedFormat, onSelectFormat }) {
                 }`}
               >
                 <Video className="w-4 h-4" />
-                <span>Vidéo (MP4)</span>
+                <span>Video (MP4)</span>
                 {selectedFormat === 'mp4' && <CheckCircle className="w-3.5 h-3.5 ml-1" />}
               </button>
 

@@ -28,24 +28,19 @@ export function UrlInput({ onSearch, isLoading }) {
     setUrl('');
   };
 
-  const handleSample = (sampleUrl) => {
-    setUrl(sampleUrl);
-    onSearch(sampleUrl);
-  };
-
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* Title & Tagline */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold mb-4">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Qualité originale jusqu'en 4K & MP3 320kbps avec pochette</span>
+          <span>Original quality up to 4K & 320kbps MP3 with album cover</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3 leading-tight">
-          Téléchargez YouTube en <span className="bg-gradient-to-r from-rose-500 via-brand-500 to-amber-400 bg-clip-text text-transparent">MP4 & MP3</span>
+          Download YouTube to <span className="bg-gradient-to-r from-rose-500 via-brand-500 to-amber-400 bg-clip-text text-transparent">MP4 & MP3</span>
         </h1>
         <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
-          Collez simplement l'adresse de votre vidéo. Choix complet de résolutions, débit audio haute fidélité et intégration automatique de la vignette en cover MP3.
+          Simply paste any video link. Full resolution selection, high-fidelity audio bitrates, and automatic thumbnail embedding as MP3 cover art.
         </p>
       </div>
 
@@ -61,7 +56,7 @@ export function UrlInput({ onSearch, isLoading }) {
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Collez l'URL de la vidéo YouTube (ex: https://www.youtube.com/watch?v=...)"
+            placeholder="Paste YouTube video link (e.g. https://www.youtube.com/watch?v=...)"
             className="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm sm:text-base px-2 py-2.5 focus:outline-none"
             disabled={isLoading}
           />
@@ -73,7 +68,7 @@ export function UrlInput({ onSearch, isLoading }) {
                 type="button"
                 onClick={handleClear}
                 className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-dark-800 rounded-lg transition-colors"
-                title="Effacer"
+                title="Clear"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -82,10 +77,10 @@ export function UrlInput({ onSearch, isLoading }) {
                 type="button"
                 onClick={handlePaste}
                 className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 text-slate-300 hover:text-white bg-dark-800/80 hover:bg-dark-700 rounded-lg transition-colors border border-dark-700"
-                title="Coller depuis le presse-papier"
+                title="Paste from clipboard"
               >
                 <Clipboard className="w-3.5 h-3.5 text-rose-400" />
-                <span className="hidden sm:inline">Coller</span>
+                <span className="hidden sm:inline">Paste</span>
               </button>
             )}
 
@@ -97,11 +92,11 @@ export function UrlInput({ onSearch, isLoading }) {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline">Analyse...</span>
+                  <span className="hidden sm:inline">Analyzing...</span>
                 </>
               ) : (
                 <>
-                  <span>Analyser</span>
+                  <span>Analyze</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -109,18 +104,6 @@ export function UrlInput({ onSearch, isLoading }) {
           </div>
         </div>
       </form>
-
-      {/* Quick sample badge */}
-      <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-400">
-        <span>Exemple rapide :</span>
-        <button
-          type="button"
-          onClick={() => handleSample('https://www.youtube.com/watch?v=jNQXAC9IVRw')}
-          className="text-rose-400 hover:text-rose-300 underline font-medium underline-offset-2 transition-colors"
-        >
-          Me at the zoo (19s)
-        </button>
-      </div>
 
     </div>
   );
