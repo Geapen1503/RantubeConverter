@@ -21,13 +21,10 @@ export function Navbar() {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-                RanTube
-              </span>
-              <span className="font-bold text-xl tracking-tight text-rose-500">
-                Converter
+                RanTube <span className="text-rose-500 font-extrabold">Converter</span>
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 -mt-0.5 tracking-wide">HD MP4 & MP3 Converter</p>
+            <p className="text-[10px] text-slate-400 -mt-0.5 tracking-wide">HD MP4 & MP3</p>
           </div>
         </div>
 
