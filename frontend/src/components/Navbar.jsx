@@ -23,8 +23,8 @@ export function Navbar() {
               <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
                 RanTube
               </span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                PRO
+              <span className="font-bold text-xl tracking-tight text-rose-500">
+                Converter
               </span>
             </div>
             <p className="text-[10px] text-slate-400 -mt-0.5 tracking-wide">HD MP4 & MP3 Converter</p>
