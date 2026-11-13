@@ -11,7 +11,7 @@ export function Footer() {
             <span>{new Date().getFullYear()} <strong className="text-slate-300 font-semibold">RanTube Converter</strong>. Designed for personal and private use.</span>
           </p>
           <div className="flex items-center gap-4 text-slate-400 font-medium">
-            <span className="text-slate-300">Gringo Corp</span>
+            <span className="text-slate-300">GringoDeck</span>
           </div>
         </div>
       </div>
